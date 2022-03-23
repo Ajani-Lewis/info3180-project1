@@ -5,15 +5,19 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, redirect, url_for
+from app import app, db
+from flask import render_template, request, redirect, url_for, flash
+from app.models import Property
+from app.forms import PropertyForm
+from werkzeug.utils import secure_filename
+import os
 
 
 ###
 # Routing for your application.
 ###
 
-@app.route('/')
+@app.route('/',methods=['GET', 'POST'])
 def home():
     """Render website's home page."""
     return render_template('home.html')
@@ -24,6 +28,32 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
+@app.route('/add_property', methods=['POST', 'GET'])
+def add_property():
+    form = PropertyForm()
+    if request.method == "POST":
+
+        if form.validate_on_submit:
+            title = form.title.data
+            num_bed = form.num_bed.data
+            num_bath = form.num_bed.data
+            prop_location = form.prop_location.data
+            price = form.price.data
+            prop_type = form.prop_type.data
+            desc = form.desc.data
+            image = form.image.data
+
+            img_filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
+
+            entry = Property(title=title, num_bed= num_bed, num_bath=num_bath, prop_location=prop_location, price=price, prop_type=prop_type,photo=img_filename, desc=desc)
+            db.session.add(entry)
+            db.session.commit()
+
+            flash('Property Added', 'success')
+            return redirect(url_for('home'))
+            
+    return render_template("add_property.html", form=form)
 
 ###
 # The functions below should be applicable to all Flask apps.

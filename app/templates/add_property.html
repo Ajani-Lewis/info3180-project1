@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <div class="prop-form center-block">
+    <h2>Please Enter Property Information</h2>
+    
+    <form action="{{ url_for('add_property') }}" method="POST" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      <div class="form-group">
+
+        <div>
+            {{ form.title.label }}
+            {{ form.title(class='form-control', placeholder="Enter property title") }}
+        </div>
+
+        <div>
+            {{ form.desc.label }}
+            {{ form.desc(class='form-control', placeholder="Enter property type") }}
+        </div>
+        
+        <div>
+            {{ form.num_bed.label }}
+            {{ form.num_bed(class='form-control', placeholder="Enter number of bedrooms") }}
+        </div>
+
+        <div>
+            {{ form.num_bath.label }}
+            {{ form.num_bath(class='form-control', placeholder="Enter number of bathrooms") }}
+        </div>
+
+        <div>
+            {{ form.price.label }}
+            {{ form.price(class='form-control', placeholder="Enter your password") }}
+        </div>
+
+        <div>
+            {{ form.prop_type.label }}
+            {{ form.prop_type(class='form-control', placeholder="Enter your username") }}
+        </div> 
+
+        <div>
+            {{ form.prop_location.label }}
+            {{ form.prop_location(class='form-control', placeholder="Enter your password") }}
+        </div>
+
+        <div>
+            {{ form.image.label }}
+            {{ form.image(class='form-control', placeholder="Enter your username") }}
+        </div> 
+
+      </div>
+      <button type="submit" name="submit" class="btn btn-primary btn-block">Add Property</button>
+    </form>
+  </div>
+{% endblock %}
