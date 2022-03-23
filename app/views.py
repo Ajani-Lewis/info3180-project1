@@ -69,7 +69,7 @@ def properties():
         return render_template('properties.html', properties = get_properties())
     
     flash("No Entry In Database", 'danger')
-    return redirect('properties.html')
+    return redirect('home.html')
 
 
 @app.route('/properties/<int:id>')
