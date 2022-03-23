@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, send_from_directory
 from app.models import Property
 from app.forms import PropertyForm
 from werkzeug.utils import secure_filename
@@ -28,8 +28,9 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
 
-@app.route('/add_property', methods=['POST', 'GET'])
-def add_property():
+
+@app.route('/properties/create', methods=['POST', 'GET'])
+def create():
     form = PropertyForm()
     if request.method == "POST":
 
@@ -53,11 +54,37 @@ def add_property():
             flash('Property Added', 'success')
             return redirect(url_for('home'))
             
-    return render_template("add_property.html", form=form)
+    return render_template("create.html", form=form)
+
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER']), filename)
+
+
+@app.route('/properties')
+def properties():
+    
+    if get_properties() != []:
+        return render_template('properties.html', properties = get_properties())
+    
+    flash("No Entry In Database", 'danger')
+    return redirect('properties.html')
+
+
+@app.route('/properties/<int:id>')
+def view_property(id):
+    property = Property.query.get_or_404(id)
+    return render_template('view_property.html', property = property)
+
 
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+
+def get_properties():
+    properties = Property.query.all()
+    return properties
 
 # Display Flask WTF errors as Flash messages
 def flash_errors(form):
